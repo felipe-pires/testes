@@ -1,12 +1,15 @@
 package com.api.testes.application.user.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.api.testes.application.user.UserRepository;
 import com.api.testes.application.user.UserService;
 import com.api.testes.domain.user.User;
+import com.api.testes.exceptions.NotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -19,31 +22,30 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User saveUser(User user) {
+    public User saveUser(User user) throws Exception{
         return repository.save(user);
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll() throws Exception{
         return repository.findAll();
     }
 
     @Override
-    public User findById(Long id) {
-        return repository.findById(id).get();
+    public User findById(Integer id) throws Exception {
+        Optional<User> user = repository.findById(id);
+        return user.orElseThrow(() -> new NotFoundException("Usuario nao encontrado"));
     }
 
     @Override
-    public User update(User user) {
+    public User update(User user) throws Exception {
         findById(user.getId());
         return repository.save(user);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) throws Exception {
         findById(id);
         repository.deleteById(id);
     }
-
-
 }

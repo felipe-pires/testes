@@ -22,27 +22,27 @@ public class UserController {
     private UserService service;
 
     @GetMapping
-    public ResponseEntity findAll(){
+    public ResponseEntity findAll() throws Exception{
         return new ResponseEntity(service.findAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody User user){
+    public ResponseEntity save(@RequestBody User user) throws Exception{
         return new ResponseEntity(service.saveUser(user), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Long id){
+    public ResponseEntity findById(@PathVariable Integer id) throws Exception{
         return new ResponseEntity(service.findById(id), HttpStatus.OK);
     }
     
     @PutMapping
-    public ResponseEntity update(@RequestBody User user){
+    public ResponseEntity update(@RequestBody User user) throws Exception{
         return new ResponseEntity(service.update(user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable Integer id) throws Exception{
         service.delete(id);
     }
 }
