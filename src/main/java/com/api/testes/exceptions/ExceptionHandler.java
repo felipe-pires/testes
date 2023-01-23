@@ -29,4 +29,10 @@ public class ExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(DataIntegratyViolationException.class)
+    public ResponseEntity<ErrorDetail> dataIntegratyViolationException(DataIntegratyViolationException exception, HttpServletRequest request){
+        ErrorDetail error = new ErrorDetail(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
 }

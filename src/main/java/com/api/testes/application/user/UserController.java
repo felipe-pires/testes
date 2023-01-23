@@ -52,6 +52,11 @@ public class UserController {
         return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class));
     }
 
+    @GetMapping("email/{email}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String email) throws Exception {
+        return ResponseEntity.ok().body(mapper.map(service.findByEmail(email), UserDTO.class));
+    }
+
     @PutMapping
     public ResponseEntity update(@RequestBody User user) throws Exception {
         return new ResponseEntity(service.update(user), HttpStatus.CREATED);
