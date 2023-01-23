@@ -1,5 +1,6 @@
 package com.api.testes.application.user;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.testes.domain.dto.UserDTO;
 import com.api.testes.domain.user.User;
 
 @RestController
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private ModelMapper mapper;
 
     @GetMapping
     public ResponseEntity findAll() throws Exception{
@@ -30,10 +35,10 @@ public class UserController {
     public ResponseEntity save(@RequestBody User user) throws Exception{
         return new ResponseEntity(service.saveUser(user), HttpStatus.CREATED);
     }
-
+    
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Integer id) throws Exception{
-        return new ResponseEntity(service.findById(id), HttpStatus.OK);
+    public ResponseEntity<UserDTO> findById(@PathVariable Integer id) throws Exception{
+        return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class));
     }
     
     @PutMapping
