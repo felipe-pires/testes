@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.api.testes.application.user.UserRepository;
 import com.api.testes.application.user.UserService;
+import com.api.testes.domain.dto.UserDTO;
 import com.api.testes.domain.user.User;
 import com.api.testes.exceptions.BusinessException;
 import com.api.testes.exceptions.NotFoundException;
@@ -39,10 +40,11 @@ public class UserServiceImpl implements UserService {
     public List<User> findAll() throws NotFoundException {
         log.info("Buscando todos os usuarios...");
         List<User> users = repository.findAll();
-        if (!users.isEmpty()) {
+
+        if (users.isEmpty()) {
             throw new NotFoundException("Nenhum usuario encontrado");
         }
-
+       
         return users;
     }
 

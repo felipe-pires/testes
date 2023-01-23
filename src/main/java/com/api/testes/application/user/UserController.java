@@ -1,5 +1,8 @@
 package com.api.testes.application.user;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,27 +30,31 @@ public class UserController {
     private ModelMapper mapper;
 
     @GetMapping
-    public ResponseEntity findAll() throws Exception{
-        return new ResponseEntity(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<UserDTO>> findAll() throws Exception {
+
+        List<UserDTO> usersDto = service.findAll().stream().map(user -> mapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(usersDto);
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody User user) throws Exception{
+    public ResponseEntity save(@RequestBody User user) throws Exception {
         return new ResponseEntity(service.saveUser(user), HttpStatus.CREATED);
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable Integer id) throws Exception{
+    public ResponseEntity<UserDTO> findById(@PathVariable Integer id) throws Exception {
         return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class));
     }
-    
+
     @PutMapping
-    public ResponseEntity update(@RequestBody User user) throws Exception{
+    public ResponseEntity update(@RequestBody User user) throws Exception {
         return new ResponseEntity(service.update(user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) throws Exception{
+    public void delete(@PathVariable Integer id) throws Exception {
         service.delete(id);
     }
 }
