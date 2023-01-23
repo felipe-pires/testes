@@ -3,6 +3,7 @@ package com.api.testes.application.user.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
+    private ModelMapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, ModelMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
-    public User saveUser(User user) throws BusinessException {
-        log.info("Salvando usuario: " + user);
+    public User saveUser(UserDTO userDto) throws BusinessException {
+        log.info("Salvando usuario: " + userDto.getName());
+        User user = mapper.map(userDto, User.class);
         try {
             return repository.save(user);
         } catch (Exception e) {

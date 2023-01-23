@@ -1,5 +1,6 @@
 package com.api.testes.application.user;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.testes.domain.dto.UserDTO;
 import com.api.testes.domain.user.User;
@@ -39,8 +41,10 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody User user) throws Exception {
-        return new ResponseEntity(service.saveUser(user), HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> save(@RequestBody UserDTO userDto) throws Exception {
+        User user = service.saveUser(userDto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/{id}")
