@@ -35,9 +35,7 @@ public class UserServiceImpl implements UserService {
         log.info("Salvando usuario: " + userDto.getName());
         User user = mapper.map(userDto, User.class);
 
-        if (repository.findByEmail(user.getEmail()).isPresent()) {
-            throw new DataIntegratyViolationException("email ja existe na base de dados");
-        }
+        existsEmail(user.getEmail());
 
         try {
             return repository.save(user);
@@ -66,14 +64,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user) throws BusinessException {
+    public User update(UserDTO userDto) throws BusinessException {
         log.info("Atualizando usuario...");
         try {
-            findById(user.getId());
+            findById(userDto.getId());
+            User user = mapper.map(userDto, User.class);
+
+            existsEmail(user.getEmail());
+
             return repository.save(user);
         } catch (Exception e) {
             log.info("Erro ao atualizar usuario");
             throw new BusinessException("Erro ao atualizar usuario");
+        }
+    }
+
+    private void existsEmail(String email) {
+        if (repository.findByEmail(email).isPresent()) {
+            throw new DataIntegratyViolationException("email ja existe na base de dados");
         }
     }
 
