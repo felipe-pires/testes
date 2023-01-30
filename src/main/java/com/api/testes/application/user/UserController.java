@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,13 +52,14 @@ public class UserController {
     }
 
     @GetMapping("email/{email}")
-    public ResponseEntity<UserDTO> findById(@PathVariable String email) throws Exception {
+    public ResponseEntity<UserDTO> findByEmail(@PathVariable String email) throws Exception {
         return ResponseEntity.ok().body(mapper.map(service.findByEmail(email), UserDTO.class));
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody User user) throws Exception {
-        return new ResponseEntity(service.update(user), HttpStatus.CREATED);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> update(@PathVariable Integer id, @RequestBody UserDTO user) throws Exception {
+        user.setId(id);
+        return ResponseEntity.ok().body(mapper.map(service.update(user), UserDTO.class));
     }
 
     @DeleteMapping("/{id}")
