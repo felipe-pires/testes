@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserServiceImplTest {
@@ -129,10 +130,27 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findByEmail() {
+    void whenFindByEmailReturnAnUserInstance() throws Exception {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        User response = service.findByEmail(FELIPE_EMAIL);
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertTrue(!response.getEmail().isEmpty());
+
     }
 
-    private void startUser(){
+    @Test
+    void whenFindByEmailReturnAnNotFoundException(){
+        when(repository.findByEmail(anyString())).thenThrow(new NotFoundException("Usuario nao encontrado"));
+        try {
+            service.findByEmail(FELIPE_EMAIL);
+        } catch (Exception e) {
+            assertEquals(NotFoundException.class, e.getClass());
+        }
+    }
+
+    private void startUser() {
         user = new User(ID, FELIPE, FELIPE_EMAIL, FELIPE_PASSWORD);
         userDTO = new UserDTO(ID, FELIPE, FELIPE_EMAIL, FELIPE_PASSWORD);
         optionalUser = Optional.of(new User(ID, FELIPE, FELIPE_EMAIL, FELIPE_PASSWORD));
