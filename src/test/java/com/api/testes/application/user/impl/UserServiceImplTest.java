@@ -1,10 +1,18 @@
 package com.api.testes.application.user.impl;
 
-import com.api.testes.application.user.UserRepository;
-import com.api.testes.domain.dto.UserDTO;
-import com.api.testes.domain.user.User;
-import com.api.testes.exceptions.DataIntegratyViolationException;
-import com.api.testes.exceptions.NotFoundException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,12 +21,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import com.api.testes.application.user.UserRepository;
+import com.api.testes.domain.dto.UserDTO;
+import com.api.testes.domain.user.User;
+import com.api.testes.exceptions.DataIntegratyViolationException;
+import com.api.testes.exceptions.NotFoundException;
 
 class UserServiceImplTest {
 
@@ -62,7 +69,6 @@ class UserServiceImplTest {
     @Test
     void whenCreateThenReturnAnDataIntegrityViolationException() {
         when(repository.findByEmail(Mockito.anyString())).thenReturn(optionalUser);
-       
         try {
             userDTO.setId(2);
             service.saveUser(userDTO);
@@ -126,7 +132,21 @@ class UserServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void deleteWithSuccess() throws Exception {
+      when(repository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(repository).deleteById(anyInt());
+        service.delete(ID);
+        verify(repository, times(1)).deleteById(ID);
+    }
+
+    @Test
+    void deleteWithObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new NotFoundException("Usuario nao encontrado"));
+        try {
+            service.delete(ID);
+        } catch (Exception e) {
+           assertEquals(NotFoundException.class, e.getClass());
+        }
     }
 
     @Test
