@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public User saveUser(UserDTO userDto) throws BusinessException {
         log.info("Salvando usuario: " + userDto.getName());
 
-        existsEmail(userDto.getEmail());
+        existsEmail(userDto);
         User user = mapper.map(userDto, User.class);
 
         try {
@@ -64,13 +64,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(UserDTO userDto) throws BusinessException {
+    public User update(UserDTO userDto) throws Exception {
         log.info("Atualizando usuario...");
-        try {
-            findById(userDto.getId());
-            User user = mapper.map(userDto, User.class);
 
-            existsEmail(user.getEmail());
+        existsEmail(userDto);
+
+        try {
+            User user = mapper.map(userDto, User.class);
 
             return repository.save(user);
         } catch (Exception e) {
@@ -79,8 +79,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void existsEmail(String email) {
-        if (repository.findByEmail(email).isPresent()) {
+    private void existsEmail(UserDTO userDTO) {
+        Optional<User> optional = repository.findByEmail(userDTO.getEmail());
+        if (optional.isPresent() && !optional.get().getId().equals(userDTO.getId())) {
             throw new DataIntegratyViolationException("email ja existe na base de dados");
         }
     }

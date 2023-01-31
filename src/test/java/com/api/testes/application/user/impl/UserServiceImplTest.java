@@ -63,6 +63,7 @@ class UserServiceImplTest {
         when(repository.findByEmail(Mockito.anyString())).thenReturn(optionalUser);
        
         try {
+            userDTO.setId(2);
             service.saveUser(userDTO);
         } catch (Exception e) {
            assertEquals(DataIntegratyViolationException.class, e.getClass());
@@ -102,7 +103,25 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSucess() throws Exception {
+        when(repository.save(Mockito.any())).thenReturn(user);
+
+        User response = service.update(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertTrue(!response.getEmail().isEmpty());
+    }
+
+    @Test
+    void whenUpdateThenReturnAnDataIntegrityViolationException() {
+        when(repository.findByEmail(Mockito.anyString())).thenReturn(optionalUser);
+       
+        try {
+            service.update(userDTO);
+        } catch (Exception e) {
+           assertEquals(DataIntegratyViolationException.class, e.getClass());
+        }
     }
 
     @Test
