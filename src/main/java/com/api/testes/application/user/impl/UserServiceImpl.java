@@ -33,9 +33,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(UserDTO userDto) throws BusinessException {
         log.info("Salvando usuario: " + userDto.getName());
-        User user = mapper.map(userDto, User.class);
 
-        existsEmail(user.getEmail());
+        existsEmail(userDto.getEmail());
+        User user = mapper.map(userDto, User.class);
 
         try {
             return repository.save(user);
