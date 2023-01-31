@@ -1,18 +1,10 @@
 package com.api.testes.application.user.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Optional;
-
+import com.api.testes.application.user.UserRepository;
+import com.api.testes.domain.dto.UserDTO;
+import com.api.testes.domain.user.User;
+import com.api.testes.exceptions.DataIntegratyViolationException;
+import com.api.testes.exceptions.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,18 +13,20 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
-import com.api.testes.application.user.UserRepository;
-import com.api.testes.domain.dto.UserDTO;
-import com.api.testes.domain.user.User;
-import com.api.testes.exceptions.DataIntegratyViolationException;
-import com.api.testes.exceptions.NotFoundException;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
 
-    public static final int ID = 1;
-    public static final String FELIPE = "felipe";
-    public static final String FELIPE_EMAIL = "felipeTest@gmail.com";
-    public static final String FELIPE_PASSWORD = "123456";
+    private static final int ID = 1;
+    private static final String FELIPE = "felipe";
+    private static final String FELIPE_EMAIL = "felipeTest@gmail.com";
+    private static final String FELIPE_PASSWORD = "123456";
 
     @InjectMocks
     private UserServiceImpl service;
