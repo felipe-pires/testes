@@ -2,6 +2,20 @@ package com.api.testes.application.user;
 
 import com.api.testes.domain.dto.UserDTO;
 import com.api.testes.domain.user.User;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 class UserControllerTest {
@@ -37,27 +53,73 @@ class UserControllerTest {
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenReturnListOfUsers() throws Exception {
+        when(service.findAll()).thenReturn(List.of(user));
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+        ResponseEntity<List<UserDTO>> response = controller.findAll();
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class, response.getClass());
+
     }
 
     @Test
-    void save() {
+    void whenSaveUserThenReturnSucess() throws Exception {
+        when(service.saveUser(any())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = controller.save(userDTO);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
     }
 
     @Test
-    void findById() {
+    void whenFindByIdThenReturnSuccess() throws Exception {
+        when(service.findById(anyInt())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+        ResponseEntity<UserDTO> response = controller.findById(ID);
+
+        assertNotNull(response.getBody());
+        assertEquals(UserDTO.class, response.getBody().getClass());
+        assertTrue(!response.getBody().getEmail().isEmpty());
     }
 
     @Test
-    void findByEmail() {
+    void whenFindByEmailThenReturnSuccess() throws Exception {
+        when(service.findByEmail(anyString())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+        ResponseEntity<UserDTO> response = controller.findByEmail(FELIPE_EMAIL);
+
+        assertNotNull(response.getBody());
+        assertEquals(UserDTO.class, response.getBody().getClass());
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSucess() throws Exception {
+        when(service.update(any())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = controller.update(ID, userDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(UserDTO.class, response.getBody().getClass());
     }
 
     @Test
-    void delete() {
+    void deleteWithSuccess() throws Exception {
+        doNothing().when(service).delete(anyInt());
+
+        ResponseEntity<UserDTO> response = controller.delete(ID);
+
+        assertNotNull(response);
+        verify(service, times(1)).delete(ID);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
     }
 
     private void startUser() {
