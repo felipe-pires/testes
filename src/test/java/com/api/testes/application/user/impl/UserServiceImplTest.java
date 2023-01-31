@@ -3,6 +3,7 @@ package com.api.testes.application.user.impl;
 import com.api.testes.application.user.UserRepository;
 import com.api.testes.domain.dto.UserDTO;
 import com.api.testes.domain.user.User;
+import com.api.testes.exceptions.NotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -22,7 +24,7 @@ class UserServiceImplTest {
 
     public static final int ID = 1;
     public static final String FELIPE = "felipe";
-    public static final String FELIPE_EMAIL = "felipe@gmail.com";
+    public static final String FELIPE_EMAIL = "felipeTest@gmail.com";
     public static final String FELIPE_PASSWORD = "123456";
 
     @InjectMocks
@@ -57,13 +59,24 @@ class UserServiceImplTest {
 
     @Test
     void whenFindByIdThenReturnAnUserInstance() throws Exception {
-        Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(optionalUser);
-        User user = service.findById(ID);
+        when(repository.findById(Mockito.anyInt())).thenReturn(optionalUser);
+        User response = service.findById(ID);
 
-        assertNotNull(user);
-        assertEquals(User.class, user.getClass());
-        assertEquals(ID, user.getId());
-        assertTrue(!user.getName().isEmpty());
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertTrue(!response.getName().isEmpty());
+    }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException() throws Exception {
+        when(repository.findById(Mockito.anyInt())).thenThrow(new NotFoundException("Usuario nao encontrado"));
+        
+        try {
+            service.findById(ID);
+        } catch (Exception e) {
+           assertEquals(NotFoundException.class, e.getClass());
+        }
     }
 
     @Test

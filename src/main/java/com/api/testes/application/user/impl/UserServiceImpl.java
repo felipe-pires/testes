@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(UserDTO userDto) throws BusinessException, DataIntegratyViolationException {
+    public User saveUser(UserDTO userDto) throws BusinessException {
         log.info("Salvando usuario: " + userDto.getName());
         User user = mapper.map(userDto, User.class);
 
